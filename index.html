@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <link rel="stylesheet" href="style.css">
+   <title>Currency Converter</title>
+</head>
+<body>
+   <div class="container">
+      <h1>Currency Converter</h1>
+      <div class="container-1">
+         <div class="left-side">
+            <select class="currency-from">
+            </select>
+            <input type="text" id="input">
+         </div>
+         <div class="right-side">
+            <select class="currency-to">
+            </select>
+            <input type="text" id="result">
+         </div>
+      </div> <!-- Closing container-1 div here -->
+      <div class="btn-sec">
+         <button class="btn">Convert</button>
+      </div>
+   </div>
+   <script>
+      let selectFrom=document.querySelector(".currency-from");
+      let selectTo=document.querySelector(".currency-to");
+      let input=document.querySelector("#input");
+      let result=document.querySelector("#result");
+      let btn=document.querySelector(".btn");
+
+
+      fetch('https://api.frankfurter.app/currencies')
+      .then(res=>res.json())
+      .then(res=>displayDropDown(res))
+
+
+      function displayDropDown(res){
+         let curr=Object.entries(res);
+         for(let i=0;i<curr.length;i++){
+            let opt=`<option value="${curr[i][0]}">${curr[i][0]}</option>`
+            selectFrom.innerHTML+=opt;
+            selectTo.innerHTML+=opt;
+         }
+      }
+      btn.addEventListener('click',()=>{
+         let curr1=selectFrom.value;
+         let curr2=selectTo.value;
+         let inputVal = input.value;
+         if(curr1==curr2){
+            alert("Choose different currencies")
+         }
+         else
+            convert(curr1,curr2,inputVal);
+         
+      });
+      function convert(curr1,curr2,inputVal){
+            let host='api.frankfurter.app';
+            fetch(`https://${host}/latest?amount=${inputVal}&from=${curr1}&to=${curr2}`)
+            .then(res=>res.json())
+            .then((data)=>{
+               document.querySelector("#result").value=Object.values(data.rates)[0]
+            });
+         }
+   </script>
+</body>
+</html>
